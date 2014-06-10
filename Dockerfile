@@ -15,6 +15,9 @@ RUN ln -sf /bin/true /sbin/initctl
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install git mysql-client mysql-server apache2 libapache2-mod-php5 pwgen python-setuptools vim-tiny php5-mysql php-apc php5-gd php5-curl php5-memcache memcached drush mc
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoclean
 
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install openssh-server
+RUN mkdir -p /var/run/sshd
+
 # Make mysql listen on the outside
 RUN sed -i "s/^bind-address/#bind-address/" /etc/mysql/my.cnf
 
@@ -28,5 +31,5 @@ RUN rm -rf /var/www/ ; cd /var ; drush dl drupal ; mv /var/drupal*/ /var/www/
 RUN chmod a+w /var/www/sites/default ; mkdir /var/www/sites/default/files ; chown -R www-data:www-data /var/www/
 
 RUN chmod 755 /start.sh /etc/apache2/foreground.sh
-EXPOSE 80
+EXPOSE 22 80
 CMD ["/bin/bash", "/start.sh"]
